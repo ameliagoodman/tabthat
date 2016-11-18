@@ -6,32 +6,24 @@
  -->
 <html>
   <head>
-    <title>Getting Started Extension's Popup</title>
+    <title>I'd Tab That</title>
     <style>
       body {
         font-family: "Segoe UI", "Lucida Grande", Tahoma, sans-serif;
         font-size: 100%;
       }
-      #status {
-        /* avoid an excessively wide status text */
-        white-space: pre;
-        text-overflow: ellipsis;
-        overflow: hidden;
-        max-width: 400px;
+      #session {
+
+
       }
     </style>
 
-    <!--
-      - JavaScript and HTML must be in separate files: see our Content Security
-      - Policy documentation[1] for details and explanation.
-      -
-      - [1]: https://developer.chrome.com/extensions/contentSecurityPolicy
-     -->
+    <!-- add popup javascript and jquery -->
     <script src="popup.js"></script>
+    <script src="jquery-3.1.1.min.js"></script>
   </head>
   <body>
-    <div id="status"></div>
-    <img id="image-result" hidden>
+    <div id="session"></div>
   </body>
 </html>
 
