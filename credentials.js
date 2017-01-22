@@ -31,6 +31,7 @@ function initApp() {
       var displayName = user.displayName;
       document.getElementById('quickstart-button').textContent = 'Sign out';
       $('.content').show();
+      var database = firebase.database();
     } else {
       document.getElementById('quickstart-button').textContent = 'Sign-in with Google';
       document.getElementById('quickstart-sign-in-status').textContent = 'Signed out';
@@ -95,25 +96,24 @@ function getCurrentWindow(callback) {
 
   // queries current window to grab all URLs and titles of tabs
   chrome.tabs.query(queryInfo, function(tabs) {
-    var session = [];
-    tabs.forEach(function(tab){
-      console.assert(typeof tab.url == 'string', 'tab.url should be a string');
+    var session = {};
+    for(var i = 0; i < tabs.length; i++) {
+      console.assert(typeof tabs[i].url == 'string', 'tab.url should be a string');
       var currTab = {};
-      currTab['url'] = tab.url;
-      currTab['title']= tab.title;
-      session.push(currTab);
-    });
-
-    // returns session (an object w url and title of each tab)
+      currTab['url'] = tabs[i].url;
+      currTab['title']= tabs[i].title;
+      session[i.toString()] = currTab;
+    }
+    // returns session [{'title': "Example Title", 'url':"www.google.com"}]
     callback(session);
   });
 }
 
 function renderStatus(session) {
   var printMe = "<ul> ";
-  session.forEach(function(tab) {
-    printMe += "<li><a href=\"" + tab.url + "\">" + tab['title'] + "</a></li>";
-  });
+  for (var key in session) {
+    printMe += "<li><a href=\"" + session[key]['url'] + "\">" + session[key]['title'] + "</a></li>";
+  }
   $('#session').html(printMe + "</ul>");
 }
 
