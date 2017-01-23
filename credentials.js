@@ -7,6 +7,7 @@ var config = {
     messagingSenderId: "244894766681"
 };
 firebase.initializeApp(config);
+var database = firebase.database();
 
 /**
  * initApp handles setting up the Firebase context and registering
@@ -31,10 +32,8 @@ function initApp() {
       var displayName = user.displayName;
       document.getElementById('quickstart-button').textContent = 'Sign out';
       $('.content').show();
-      var database = firebase.database();
     } else {
       document.getElementById('quickstart-button').textContent = 'Sign-in with Google';
-      document.getElementById('quickstart-sign-in-status').textContent = 'Signed out';
       $('.content').hide();
     }
     document.getElementById('quickstart-button').disabled = false;
@@ -109,17 +108,84 @@ function getCurrentWindow(callback) {
   });
 }
 
-function renderStatus(session) {
+/*
+ * Displays the session tabs in the Session Div
+ */
+function renderStatus(session, input) {
   var printMe = "<ul> ";
   for (var key in session) {
     printMe += "<li><a href=\"" + session[key]['url'] + "\">" + session[key]['title'] + "</a></li>";
   }
-  $('#session').html(printMe + "</ul>");
+  $('#' + input).html(printMe + "</ul>");
 }
 
+/*
+ * Writes session to firebase
+ */
+function writeSession(sessionName, session) {
+  var sessionData = {};
+  var user = firebase.auth().currentUser;
+  if (user) {
+    var userData = {};
+    var userID = user.uid;
+    sessionData[sessionName] = session;
+    database.ref(userID).update(sessionData);
+  } else {
+    // No user is signed in.
+  }
+}
+
+/*
+ * Displays all old sessions
+ */
+function renderOldSessions(session, input) {
+  var printMe = "";
+  $.each(session, function(key, value) {
+    printMe +="<li><div class=\"collapsible-header\">" + key + "</div><div class=\"collapsible-body\">";
+    $.each(value, function(num, data){
+      printMe += "<a href=\"" + data['url'] + "\">" + data['title'] + "</a><br>";
+    });
+    printMe += "</div></li>";
+  });
+  console.log(printMe);
+  // for (var key in session) {
+  //   console.log(session[key]);
+  //   printMe += "<li>" + session[key] + "</li>";
+  // }
+  $('#' + input).html(printMe + "</ul>");
+}
+
+/*
+ * Get all saved sessions
+ */
+function retrieveSession() {
+  var user = firebase.auth().currentUser;
+  if (user) {
+    var userID = user.uid;
+    database.ref(userID).once('value').then(function(snapshot) {
+      renderOldSessions(snapshot.val(), "oldSession");
+    });
+  } else {
+    // No user is signed in.
+  }
+}
+
+
 window.onload = function() {
+  $('.collapsible').collapsible();
   initApp();
   getCurrentWindow(function(session) {
-    renderStatus(session);
-  })
+    renderStatus(session, "session");
+  });
+  $('#save-session-button').click(function() {
+    if ($('#title').val()) {
+      getCurrentWindow(function(session) {
+        writeSession($('#title').val(), session);
+      });
+      $('.warning').hide();
+    } else {
+      $('.warning').show();
+    }
+  });
+  retrieveSession();
 };

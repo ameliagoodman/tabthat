@@ -2,6 +2,7 @@ html, body {
   font-family: 'Roboto', 'Helvetica', sans-serif;
 }
 body {
+  background-color: #ede7f6;
   width: 400px;
   min-height: 400px;
   margin: 0;
@@ -14,31 +15,35 @@ li a {
   text-decoration: underline;
   color: #0288d1;
 }
-.mdl-grid {
-  max-width: 1024px;
-  margin: auto;
-}
-.mdl-layout__header-row {
-  padding: 0;
-}
 .quickstart-user-details-container {
   margin-top: 20px;
   line-height: 25px;
 }
-#quickstart-sign-in-status {
-  font-weight: bold;
+/* label color */
+.input-field label {
+  color: #6a1b9a;
 }
-pre {
-  overflow-x: scroll;
-  line-height: 18px;
+/* label focus color */
+.input-field input[type=placeholder] {
+  color: #aa00ff;
 }
-code {
-  white-space: pre-wrap;
-  word-break: break-all;
+/* label focus color */
+.input-field input[type=text]:focus + label {
+  color: #aa00ff;
 }
-h3 {
-  background: url('firebase-logo.png') no-repeat;
-  background-size: 40px;
-  padding-left: 50px;
-  line-height: 40px;
+/* label underline focus color */
+.input-field input[type=text]:focus {
+  border-bottom: 1px solid #aa00ff;
+  box-shadow: 0 1px 0 0 #aa00ff;
+}
+::-webkit-input-placeholder {
+   color: #e3f2fd;
+}
+
+.warning{
+  display: none;
+}
+.chip {
+  background-color: #c62828;
+  color: white;
 }
