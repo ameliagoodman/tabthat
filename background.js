@@ -1,10 +1,10 @@
 // Initialize Firebase
 var config = {
-    apiKey: "AIzaSyDmlxp1Wq_8OYQtZNrT3Q_oOhExjbLHeI4",
-    authDomain: "tabthat-20e66.firebaseapp.com",
-    databaseURL: "https://tabthat-20e66.firebaseio.com",
-    storageBucket: "tabthat-20e66.appspot.com",
-    messagingSenderId: "244894766681"
+    apiKey: "YOUR_API_KEY",
+    authDomain: "YOUR_AUTH_DOMAIN",
+    databaseURL: "YOUR_DATABASE_URL",
+    storageBucket: "YOUR_STORAGE_BUCKET",
+    messagingSenderId: "YOUR_MESSAGING_SENDER_ID"
 };
 firebase.initializeApp(config);
 
