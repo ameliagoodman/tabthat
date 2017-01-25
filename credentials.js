@@ -141,17 +141,18 @@ function writeSession(sessionName, session) {
 function renderOldSessions(session, input) {
   var printMe = "";
   $.each(session, function(key, value) {
-    printMe +="<li><div class=\"collapsible-header\">" + key + "</div><div class=\"collapsible-body\">";
+    printMe +="<li><div class=\"collapsible-header\">" + key + "</div><div class=\"collapsible-body\"><div class=\"row\" id=\"links_" + key + "\">";
+    var links = "";
     $.each(value, function(num, data){
       printMe += "<a href=\"" + data['url'] + "\">" + data['title'] + "</a><br>";
+      links += data['url'] + "%0D%0A";
     });
-    printMe += "</div></li>";
+    printMe += "</div><div class=\"row\">\
+                <div class=\"col s4 center-align\"><a class=\"btn-floating btn waves-effect waves-light green open_session\" id=\"" + key + "\"><i class=\"material-icons\">open_in_browser</i></a></div>\
+                <div class=\"col s4 center-align\"><a class=\"btn-floating btn waves-effect waves-light blue send_session\" href=\"mailto:?to=&subject=" + key + "&body=" + links + "\"><i class=\"material-icons\">email</i></a></div>\
+                <div class=\"col s4 center-align\"><a class=\"btn-floating btn waves-effect waves-light red delete_session\" id=\"" + key + "\"><i class=\"material-icons\">delete</i></a></div>\
+                </div></li>";
   });
-  console.log(printMe);
-  // for (var key in session) {
-  //   console.log(session[key]);
-  //   printMe += "<li>" + session[key] + "</li>";
-  // }
   $('#' + input).html(printMe + "</ul>");
 }
 
@@ -160,20 +161,32 @@ function renderOldSessions(session, input) {
  */
 function retrieveSession() {
   var user = firebase.auth().currentUser;
-  if (user) {
-    var userID = user.uid;
-    database.ref(userID).once('value').then(function(snapshot) {
-      renderOldSessions(snapshot.val(), "oldSession");
-    });
-  } else {
-    // No user is signed in.
-  }
+  firebase.auth().onAuthStateChanged(function(user) {
+    if (user) {
+
+      var userID = user.uid;
+      database.ref(userID).on('value', function(snapshot) {
+        renderOldSessions(snapshot.val(), "oldSession");
+      });
+    } else {
+      console.log("No user");
+      // No user is signed in.
+    }
+  });
+}
+
+/*
+ * sends email with session info to specified address
+ */
+function sendEmail(session, address) {
+
 }
 
 
 window.onload = function() {
   $('.collapsible').collapsible();
   initApp();
+  retrieveSession();
   getCurrentWindow(function(session) {
     renderStatus(session, "session");
   });
@@ -187,5 +200,41 @@ window.onload = function() {
       $('.warning').show();
     }
   });
-  retrieveSession();
+
+  $('body').on('click', '.delete_session', function () {
+    var sessionID = $(this).attr('id');
+    firebase.auth().onAuthStateChanged(function(user) {
+      if (user) {
+        var userID = user.uid;
+        database.ref(userID + "/" + sessionID).remove();
+      } else {
+        console.log("No user");
+        // No user is signed in.
+      }
+    });
+  });
+  $('body').on('click', '.open_session', function () {
+    var sessionID = $(this).attr('id');
+    firebase.auth().onAuthStateChanged(function(user) {
+      if (user) {
+        var userID = user.uid;
+        database.ref(userID + "/" + sessionID).once('value').then(function(snapshot) {
+          var session = snapshot.val();
+          var urls = [];
+          $.each(session, function(num, data) {
+            urls.push(data['url']);
+          });
+          chrome.windows.create({
+            url: urls,
+            type: "normal",
+            focused: true
+          });
+        });
+      } else {
+        console.log("No user");
+        // No user is signed in.
+      }
+    });
+  });
+
 };
