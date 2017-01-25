@@ -213,6 +213,27 @@ window.onload = function() {
       }
     });
   });
+
+  $('body').on('click', '.copy_session', function () {
+    var sessionID = $(this).attr('id');
+    firebase.auth().onAuthStateChanged(function(user) {
+      if (user) {
+        var userID = user.uid;
+        database.ref(userID + "/" + sessionID).once('value').then(function(snapshot) {
+          var session = snapshot.val();
+          var urls = "";
+          $.each(session, function(num, data) {
+            urls += data['url'] + "\n";
+          });
+
+        });
+      } else {
+        console.log("No user");
+        // No user is signed in.
+      }
+    });
+  });
+
   $('body').on('click', '.open_session', function () {
     var sessionID = $(this).attr('id');
     firebase.auth().onAuthStateChanged(function(user) {

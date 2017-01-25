@@ -5,10 +5,10 @@
   "version": "1.0",
 
   "icons": {
-    "128": "firebase.png"
+    "128": "tabthat.png"
   },
   "browser_action": {
-    "default_icon": "firebase.png",
+    "default_icon": "tabthat.png",
     "default_popup": "credentials.html"
   },
   "background": {
