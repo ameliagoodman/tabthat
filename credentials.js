@@ -145,12 +145,10 @@ function renderOldSessions(session, input) {
     var links = "";
     $.each(value, function(num, data){
       printMe += "<a href=\"" + data['url'] + "\">" + data['title'] + "</a><br>";
-      links += data['url'] + "%0D%0A";
     });
     printMe += "</div><div class=\"row\">\
-                <div class=\"col s4 center-align\"><a class=\"btn-floating btn waves-effect waves-light green open_session\" id=\"" + key + "\"><i class=\"material-icons\">open_in_browser</i></a></div>\
-                <div class=\"col s4 center-align\"><a class=\"btn-floating btn waves-effect waves-light blue send_session\" href=\"mailto:?to=&subject=" + key + "&body=" + links + "\"><i class=\"material-icons\">email</i></a></div>\
-                <div class=\"col s4 center-align\"><a class=\"btn-floating btn waves-effect waves-light red delete_session\" id=\"" + key + "\"><i class=\"material-icons\">delete</i></a></div>\
+                <div class=\"col s6 center-align\"><a class=\"btn-floating btn waves-effect waves-light green open_session\" id=\"" + key + "\"><i class=\"material-icons\">open_in_browser</i></a></div>\
+                <div class=\"col s6 center-align\"><a class=\"btn-floating btn waves-effect waves-light red delete_session\" id=\"" + key + "\"><i class=\"material-icons\">delete</i></a></div>\
                 </div></li>";
   });
   $('#' + input).html(printMe + "</ul>");
@@ -207,26 +205,6 @@ window.onload = function() {
       if (user) {
         var userID = user.uid;
         database.ref(userID + "/" + sessionID).remove();
-      } else {
-        console.log("No user");
-        // No user is signed in.
-      }
-    });
-  });
-
-  $('body').on('click', '.copy_session', function () {
-    var sessionID = $(this).attr('id');
-    firebase.auth().onAuthStateChanged(function(user) {
-      if (user) {
-        var userID = user.uid;
-        database.ref(userID + "/" + sessionID).once('value').then(function(snapshot) {
-          var session = snapshot.val();
-          var urls = "";
-          $.each(session, function(num, data) {
-            urls += data['url'] + "\n";
-          });
-
-        });
       } else {
         console.log("No user");
         // No user is signed in.
